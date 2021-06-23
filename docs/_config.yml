@@ -1,0 +1,15 @@
+remote_theme: ddc-java/ddc-day
+repository_links:
+  enabled: true
+page_navigator:
+  enabled: true
+title_from_headings:
+  enabled: false
+
+title: "Codebreaker"
+description: "An Android implementation of Bulls & Cows (aka Mastermind)"
+author:
+  name: Milford Scroggins
+  email: lee_scroggins@yahoo.com
+  copyright: false
+
