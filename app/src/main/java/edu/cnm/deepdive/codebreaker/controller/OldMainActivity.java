@@ -1,7 +1,6 @@
 package edu.cnm.deepdive.codebreaker.controller;
 
 import android.os.Bundle;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -19,7 +18,7 @@ public class OldMainActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.old_activity_main);
+    setContentView(R.layout.activity_old_main);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -34,13 +33,11 @@ public class OldMainActivity extends AppCompatActivity {
     GameViewModel viewModel = new ViewModelProvider(this)
         .get(GameViewModel.class);
     getLifecycle().addObserver(viewModel);
-    viewModel.getThrowable().observe(this, new Observer<Throwable>() {
-      @Override
-      public void onChanged(Throwable throwable) {
-        if (throwable != null) {
-          //noinspection ConstantConditions
-          Snackbar.make(findViewById(R.id.root_view), throwable.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
-        }
+    viewModel.getThrowable().observe(this, (throwable) -> {
+      if (throwable != null) {
+        //noinspection ConstantConditions
+        Snackbar.make(findViewById(R.id.root_view),
+            throwable.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
       }
     });
     viewModel.startGame();
