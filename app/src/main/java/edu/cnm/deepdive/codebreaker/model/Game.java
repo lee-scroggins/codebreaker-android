@@ -2,6 +2,8 @@ package edu.cnm.deepdive.codebreaker.model;
 
 import com.google.gson.annotations.Expose;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Game {
 
@@ -22,6 +24,8 @@ public class Game {
 
   @Expose
   private boolean solved;
+
+  private final List<Guess> guesses = new LinkedList<>();
 
 
   public String getId() {
@@ -71,4 +75,11 @@ public class Game {
   public void setSolved(boolean solved) {
     this.solved = solved;
   }
+
+  public List<Guess> getGuesses() {
+    return guesses;
+  }
+
 }
+
+
