@@ -35,7 +35,7 @@ public class GameRepository {
         .subscribeOn(Schedulers.io());
   }
 
-  public Single<Guess> newGuess(Game game, String text) {
+  public Single<Guess> addGuess(Game game, String text) {
     Guess guess = new Guess();
     guess.setText(text);
     return proxy.submitGuess(game.getId(), guess)
