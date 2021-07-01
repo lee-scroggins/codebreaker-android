@@ -1,13 +1,20 @@
 package edu.cnm.deepdive.codebreaker.model;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+@Entity
 public class Game {
 
   @Expose
+  @PrimaryKey
+  @ColumnInfo(name = "game_id")
   private String id;
 
   @Expose
@@ -20,11 +27,13 @@ public class Game {
   private int length;
 
   @Expose
+  @ColumnInfo(name = "guess_count")
   private int guessCount;
 
   @Expose
   private boolean solved;
 
+  @Ignore
   private final List<Guess> guesses = new LinkedList<>();
 
 
