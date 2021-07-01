@@ -5,4 +5,6 @@
   <string name="title_scoreboard">Scoreboard</string>
   <string name="title_history">History</string>
   <string name="submit">Submit</string>
+
+  <string name="match_results_format">%1$d / %2$d</string>
 </resources>
