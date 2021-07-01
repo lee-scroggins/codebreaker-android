@@ -52,6 +52,7 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
 
   public void submitGuess(String text) {
     throwable.setValue(null);
+    //noinspection ConstantConditions
     pending.add(
         repository
             .addGuess(game.getValue(), text)

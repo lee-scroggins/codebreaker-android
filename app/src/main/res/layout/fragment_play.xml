@@ -33,7 +33,8 @@
       android:id="@+id/guess"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:inputType="textCapCharacters"/>
+      android:inputType="textCapCharacters"
+      android:enabled="false"/>
 
 
   </LinearLayout>
@@ -46,6 +47,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="@id/guess_container"
     app:layout_constraintBottom_toBottomOf="@id/guess_container"
-    android:text="@string/submit"/>
+    android:text="@string/submit"
+    android:enabled="false"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
