@@ -1,6 +1,11 @@
 package edu.cnm.deepdive.codebreaker.controller;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +41,30 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.LENGTH_LONG).show();
       }
     });
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    super.onCreateOptionsMenu(menu);
+    getMenuInflater().inflate(R.menu.options,menu);
+    return true;
+  }
+
+  @SuppressLint("NonConstantResourceId")
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    boolean handled = true;
+    //noinspection SwitchStatementWithTooFewBranches
+    switch (item.getItemId()) {
+      // TODO Specify case ids from options menu
+      case R.id.settings_options:
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+        break;
+      default:
+        handled = super.onOptionsItemSelected(item);
+    }
+    return handled;
   }
 
 }
