@@ -1,15 +1,20 @@
 package edu.cnm.deepdive.codebreaker.controller;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import edu.cnm.deepdive.codebreaker.R;
 import edu.cnm.deepdive.codebreaker.adapter.SimpleGuessAdapter;
 import edu.cnm.deepdive.codebreaker.databinding.FragmentPlayBinding;
 import edu.cnm.deepdive.codebreaker.viewmodel.GameViewModel;
@@ -19,6 +24,12 @@ public class PlayFragment extends Fragment implements TextWatcher {
   private FragmentPlayBinding binding;
   private GameViewModel viewModel;
   private int codeLength;
+
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setHasOptionsMenu(true);
+  }
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +64,27 @@ public class PlayFragment extends Fragment implements TextWatcher {
   }
 
   @Override
+  public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    inflater.inflate(R.menu.play_options, menu);
+  }
+
+  @SuppressLint("NonConstantResourceId")
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    boolean handled = true;
+    //noinspection SwitchStatementWithTooFewBranches
+    switch (item.getItemId()) {
+      case R.id.new_game_option:
+        viewModel.startGame();
+        break;
+      default:
+        handled = super.onOptionsItemSelected(item);
+    }
+    return handled;
+  }
+
+  @Override
   public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
   }
@@ -65,9 +97,9 @@ public class PlayFragment extends Fragment implements TextWatcher {
   @Override
   public void afterTextChanged(Editable s) {
     enforceSubmitConditions();
-    }
+  }
 
-  private void enforceSubmitConditions () {
+  private void enforceSubmitConditions() {
     binding.submit.setEnabled(binding.guess.getText().toString().trim().length() == codeLength);
   }
 
