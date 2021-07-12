@@ -4,7 +4,7 @@
 <resources>
 
   <integer name="code_length_pref_min">3</integer>
-  <integer name="code_length_pref_max">10</integer>
+  <integer name="code_length_pref_max">6</integer>
   <integer name="code_length_pref_default">4</integer>
   <integer name="code_length_pref_increment">1</integer>
 

@@ -12,8 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import edu.cnm.deepdive.codebreaker.R;
@@ -22,7 +25,7 @@ import edu.cnm.deepdive.codebreaker.databinding.FragmentPlayBinding;
 import edu.cnm.deepdive.codebreaker.model.Game;
 import edu.cnm.deepdive.codebreaker.viewmodel.GameViewModel;
 
-public class PlayFragment extends Fragment implements InputFilter {
+public class PlayFragment extends Fragment {
 
   private static final String ILLEGAL_CHARACTERS_FORMAT = "[^%s]+";
 
@@ -62,13 +65,13 @@ public class PlayFragment extends Fragment implements InputFilter {
     // TODO Make game display prettier.
     codeLength = game.getLength();
     pool = game.getPool();
-    illegalCharacters = String.format(ILLEGAL_CHARACTERS_FORMAT, pool);
+    // TODO Update visibility & contents of spinners.
     if (game.isSolved()) {
-      binding.guess.setEnabled(false);
-      binding.submit.setEnabled(false);
+      binding.guessContainer.setVisibility(View.INVISIBLE);
+      binding.submit.setVisibility(View.INVISIBLE);
     } else {
-      binding.guess.setEnabled(true);
-      enforceSubmitConditions(binding.guess.length());
+      binding.guessContainer.setVisibility(View.VISIBLE);
+      binding.submit.setVisibility(View.VISIBLE);
     }
     SimpleGuessAdapter adapter = new SimpleGuessAdapter(getContext(), game.getGuesses());
     binding.guessList.setAdapter(adapter);
@@ -99,23 +102,37 @@ public class PlayFragment extends Fragment implements InputFilter {
     binding.submit.setEnabled(newLength == codeLength);
   }
 
-  @Override
-  public CharSequence filter(CharSequence source, int sourceStart, int sourceEnd,
-      Spanned dest, int destStart, int destEnd) {
-    String modifiedSource = source
-        .subSequence(sourceStart, sourceEnd)
-        .toString()
-        .toUpperCase()
-        .replaceAll(illegalCharacters, "");
-    StringBuilder builder = new StringBuilder(dest);
-    builder.replace(destStart, destEnd, modifiedSource);
-    if (builder.length() > codeLength) {
-      modifiedSource =
-          modifiedSource.substring(0, modifiedSource.length() - (builder.length() - codeLength));
+  private Spinner[] setupSpinners(ConstraintLayout layout, int numSpinners) {
+    Spinner[] spinners = new Spinner[numSpinners];
+    for (int i = 0; i < numSpinners; i++) {
+      Spinner spinner =
+          (Spinner) getLayoutInflater().inflate(R.layout.spinner_emoji, layout, false);
+      layout.addView(spinner);
+      spinner.setId(View.generateViewId());
+      spinners[i] = spinner;
     }
-    int newLength = dest.length() - (destEnd - destStart) + modifiedSource.length();
-    enforceSubmitConditions(newLength);
-    return modifiedSource;
+    int layoutId = layout.getId();
+    ConstraintSet constraints = new ConstraintSet();
+    constraints.clone(layout);
+    for (int i = 0; i < numSpinners; i++) {
+      Spinner spinner = spinners[i];
+      int spinnerId = spinner.getId();
+      constraints.connect(
+          spinnerId, ConstraintSet.START,
+          (i > 0) ? spinners[i-1].getId() : layoutId,
+          (i > 0) ? ConstraintSet.END : ConstraintSet.START
+          );
+      constraints.connect(
+          spinnerId, ConstraintSet.END,
+          (i < numSpinners - 1) ? spinners[i + 1].getId() : layoutId,
+          (i < numSpinners - 1) ? ConstraintSet.START : ConstraintSet.END
+      );
+      constraints.connect(spinnerId, ConstraintSet.TOP, layoutId, ConstraintSet.TOP);
+      constraints.connect(spinnerId, ConstraintSet.BOTTOM, layoutId, ConstraintSet.BOTTOM);
+
+    }
+    constraints.applyTo(layout);
+    return spinners;
   }
 
 }

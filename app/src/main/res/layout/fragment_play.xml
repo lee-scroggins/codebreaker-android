@@ -18,36 +18,27 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintBottom_toTopOf="@id/guess_container"/>
 
-  <LinearLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/guess_container"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:padding="@dimen/half_control_spacing"
-    android:orientation="horizontal"
-    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toStartOf="@id/submit"
-    android:minHeight="48dp">
+    app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <EditText
-      android:id="@+id/guess"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:inputType="textCapCharacters"
-      android:enabled="false"/>
-
-
-  </LinearLayout>
-
-  <Button
+  <ImageButton
     android:id="@+id/submit"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_control_spacing"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="@id/guess_container"
-    app:layout_constraintBottom_toBottomOf="@id/guess_container"
-    android:text="@string/submit"
-    android:enabled="false"/>
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:src="@android:drawable/ic_menu_send"
+    android:contentDescription="@string/submit"
+    android:tooltipText="@string/submit"
+    android:visibility="invisible"
+    android:background="?android:selectableItemBackgroundBorderless"
+  app:layout_constraintEnd_toEndOf="parent"
+  app:layout_constraintTop_toTopOf="@id/guess_container"
+  app:layout_constraintBottom_toBottomOf="@id/guess_container"
+  app:layout_constraintDimensionRatio="3:5"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
