@@ -18,12 +18,12 @@ import edu.cnm.deepdive.codebreaker.model.Game;
 import edu.cnm.deepdive.codebreaker.service.GameRepository;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
+import java.util.stream.Collectors;
 
 public class GameViewModel extends AndroidViewModel implements LifecycleObserver {
 
   private final GameRepository repository;
   private final MutableLiveData<Game> game;
-  private final MutableLiveData<String> pool;
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
   private final SharedPreferences preferences;
@@ -42,16 +42,11 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
       builder.append(emoji);
     }
     basePool = builder.toString();
-    pool = new MutableLiveData<>(basePool);
     startGame();
   }
 
   public LiveData<Game> getGame() {
     return game;
-  }
-
-  public LiveData<String> getPool() {
-    return pool;
   }
 
   public LiveData<Throwable> getThrowable() {
@@ -62,7 +57,7 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
     throwable.setValue(null);
     pending.add(
         repository
-            .create(pool.getValue(), getCodeLengthPref())
+            .create(getPoolPref(), getCodeLengthPref())
             .subscribe(
                 game::postValue,
                 this::handleThrowable
@@ -98,6 +93,17 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
     Resources res = context.getResources();
     return preferences.getInt(res.getString(R.string.code_length_pref_key),
         res.getInteger(R.integer.code_length_pref_default));
+  }
+
+  private String getPoolPref() {
+    Resources res = getApplication().getResources();
+    int poolSizePref = preferences.getInt(res.getString(R.string.pool_size_pref_key),
+        res.getInteger(R.integer.pool_size_pref_default));
+    return basePool
+        .codePoints()
+        .limit(poolSizePref)
+        .mapToObj((codePoint) -> new String(new int[]{codePoint}, 0, 1))
+        .collect(Collectors.joining());
   }
 
 }

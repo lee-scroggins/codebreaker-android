@@ -8,4 +8,10 @@
   <integer name="code_length_pref_default">4</integer>
   <integer name="code_length_pref_increment">1</integer>
 
+  <integer name="pool_size_pref_min">4</integer>
+  <integer name="pool_size_pref_max">16</integer>
+  <integer name="pool_size_pref_default">4</integer>
+  <integer name="pool_size_pref_increment">1</integer>
+
+
 </resources>

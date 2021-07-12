@@ -10,6 +10,11 @@
   <string name="settings_label">Settings</string>
   <string name="code_length_pref_key">code_length_preference</string>
   <string name="code_length_pref_title">Code Length</string>
+
+  <string name="pool_size_pref_key">pool_size_preference</string>
+  <string name="pool_size_pref_title">Pool Size</string>
+
+
   <string name="new_game_title">New Game</string>
 
   <string-array name="emojis">

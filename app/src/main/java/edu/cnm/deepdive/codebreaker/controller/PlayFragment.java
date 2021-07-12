@@ -69,23 +69,24 @@ public class PlayFragment extends Fragment {
     codeLength = game.getLength();
     pool = game.getPool();
     // TODO Update visibility & contents of spinners.
-    List<String> emojis = pool
-        .codePoints()
-        .mapToObj((codePoint) -> new String(new int[]{codePoint}, 0, 1))
-        .collect(Collectors.toList());
+    String[] emojis = getUnicodeArray(pool);
     List<Guess> guesses = game.getGuesses();
-    Guess lastGuess = guesses.isEmpty() ? null : guesses.get(guesses.size()-1);
-    for (int i = 0; i < spinners.length; i++) {
-      spinners[i].setVisibility((i < codeLength) ? View.VISIBLE : View.GONE);
+    Guess lastGuess = guesses.isEmpty() ? null : guesses.get(guesses.size() - 1);
+    for (int spinnerIndex = codeLength; spinnerIndex < spinners.length; spinnerIndex++) {
+      spinners[spinnerIndex].setVisibility(View.GONE);
+    }
+    for (int spinnerIndex = 0; spinnerIndex < codeLength; spinnerIndex++) {
+      spinners[spinnerIndex].setVisibility(View.VISIBLE);
       ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
           R.layout.item_emoji, emojis);
       adapter.setDropDownViewResource(R.layout.item_emoji_dropdown);
-      spinners[i].setAdapter(adapter);
+      spinners[spinnerIndex].setAdapter(adapter);
       if (lastGuess != null) {
-        String selection = new String (new int[]{lastGuess.getText().codePointAt(i)}, 0, 1);
-        for (int j = 0; j < spinners[i].getChildCount(); j++) {
-          if (spinners[i].getItemAtPosition(j).equals(selection)) {
-            spinners[i].setSelection(j);
+        String[] guessEmojis = getUnicodeArray(lastGuess.getText());
+            String selection = guessEmojis[spinnerIndex];
+        for (int emojiIndex = 0; emojiIndex < emojis.length; emojiIndex++) {
+          if (emojis[emojiIndex].equals(selection)) {
+            spinners[spinnerIndex].setSelection(emojiIndex);
           }
         }
       }
@@ -156,6 +157,13 @@ public class PlayFragment extends Fragment {
     }
     constraints.applyTo(layout);
     return spinners;
+  }
+
+  private String[] getUnicodeArray(String source) {
+    return source
+        .codePoints()
+        .mapToObj((codePoint) -> new String(new int[]{codePoint}, 0, 1))
+        .toArray(String[]::new);
   }
 
 }
