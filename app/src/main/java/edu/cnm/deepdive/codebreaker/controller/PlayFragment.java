@@ -2,16 +2,13 @@ package edu.cnm.deepdive.codebreaker.controller;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,17 +20,18 @@ import edu.cnm.deepdive.codebreaker.R;
 import edu.cnm.deepdive.codebreaker.adapter.SimpleGuessAdapter;
 import edu.cnm.deepdive.codebreaker.databinding.FragmentPlayBinding;
 import edu.cnm.deepdive.codebreaker.model.Game;
+import edu.cnm.deepdive.codebreaker.model.Guess;
 import edu.cnm.deepdive.codebreaker.viewmodel.GameViewModel;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayFragment extends Fragment {
-
-  private static final String ILLEGAL_CHARACTERS_FORMAT = "[^%s]+";
 
   private FragmentPlayBinding binding;
   private GameViewModel viewModel;
   private int codeLength;
   private String pool;
-  private String illegalCharacters;
+  private Spinner[] spinners;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,10 +44,15 @@ public class PlayFragment extends Fragment {
     binding = FragmentPlayBinding.inflate(inflater, container, false);
     binding.submit.setOnClickListener((v) -> {
       // TODO Submit guess (from spinners) to viewmodel.
-      viewModel.submitGuess(binding.guess.getText().toString().trim().toUpperCase());
-      binding.guess.setText("");
+      StringBuilder builder = new StringBuilder();
+      for (int i = 0; i < codeLength; i++) {
+        String emoji = (String) spinners[i].getSelectedItem();
+        builder.append(emoji);
+      }
+      viewModel.submitGuess(builder.toString());
     });
-    binding.guess.setFilters(new InputFilter[]{this});
+    spinners = setupSpinners(
+        binding.guessContainer, getResources().getInteger(R.integer.code_length_pref_max));
     return binding.getRoot();
   }
 
@@ -66,6 +69,27 @@ public class PlayFragment extends Fragment {
     codeLength = game.getLength();
     pool = game.getPool();
     // TODO Update visibility & contents of spinners.
+    List<String> emojis = pool
+        .codePoints()
+        .mapToObj((codePoint) -> new String(new int[]{codePoint}, 0, 1))
+        .collect(Collectors.toList());
+    List<Guess> guesses = game.getGuesses();
+    Guess lastGuess = guesses.isEmpty() ? null : guesses.get(guesses.size()-1);
+    for (int i = 0; i < spinners.length; i++) {
+      spinners[i].setVisibility((i < codeLength) ? View.VISIBLE : View.GONE);
+      ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+          R.layout.item_emoji, emojis);
+      adapter.setDropDownViewResource(R.layout.item_emoji_dropdown);
+      spinners[i].setAdapter(adapter);
+      if (lastGuess != null) {
+        String selection = new String (new int[]{lastGuess.getText().codePointAt(i)}, 0, 1);
+        for (int j = 0; j < spinners[i].getChildCount(); j++) {
+          if (spinners[i].getItemAtPosition(j).equals(selection)) {
+            spinners[i].setSelection(j);
+          }
+        }
+      }
+    }
     if (game.isSolved()) {
       binding.guessContainer.setVisibility(View.INVISIBLE);
       binding.submit.setVisibility(View.INVISIBLE);
@@ -104,7 +128,7 @@ public class PlayFragment extends Fragment {
 
   private Spinner[] setupSpinners(ConstraintLayout layout, int numSpinners) {
     Spinner[] spinners = new Spinner[numSpinners];
-    for (int i = 0; i < numSpinners; i++) {
+    for (int i = 0; i < spinners.length; i++) {
       Spinner spinner =
           (Spinner) getLayoutInflater().inflate(R.layout.spinner_emoji, layout, false);
       layout.addView(spinner);
@@ -114,22 +138,21 @@ public class PlayFragment extends Fragment {
     int layoutId = layout.getId();
     ConstraintSet constraints = new ConstraintSet();
     constraints.clone(layout);
-    for (int i = 0; i < numSpinners; i++) {
+    for (int i = 0; i < spinners.length; i++) {
       Spinner spinner = spinners[i];
       int spinnerId = spinner.getId();
       constraints.connect(
           spinnerId, ConstraintSet.START,
-          (i > 0) ? spinners[i-1].getId() : layoutId,
+          (i > 0) ? spinners[i - 1].getId() : layoutId,
           (i > 0) ? ConstraintSet.END : ConstraintSet.START
-          );
+      );
       constraints.connect(
           spinnerId, ConstraintSet.END,
-          (i < numSpinners - 1) ? spinners[i + 1].getId() : layoutId,
-          (i < numSpinners - 1) ? ConstraintSet.START : ConstraintSet.END
+          (i < spinners.length - 1) ? spinners[i + 1].getId() : layoutId,
+          (i < spinners.length - 1) ? ConstraintSet.START : ConstraintSet.END
       );
       constraints.connect(spinnerId, ConstraintSet.TOP, layoutId, ConstraintSet.TOP);
       constraints.connect(spinnerId, ConstraintSet.BOTTOM, layoutId, ConstraintSet.BOTTOM);
-
     }
     constraints.applyTo(layout);
     return spinners;
