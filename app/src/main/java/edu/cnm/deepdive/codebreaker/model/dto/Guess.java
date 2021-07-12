@@ -1,4 +1,4 @@
-package edu.cnm.deepdive.codebreaker.model;
+package edu.cnm.deepdive.codebreaker.model.dto;
 
 import com.google.gson.annotations.Expose;
 import java.util.Date;
