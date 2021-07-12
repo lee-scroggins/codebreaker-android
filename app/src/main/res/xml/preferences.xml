@@ -14,5 +14,15 @@
     app:showSeekBarValue="true"
     android:title="@string/code_length_pref_title"/>
 
+  <SeekBarPreference
+    android:key="@string/pool_size_pref_key"
+    app:min="@integer/pool_size_pref_min"
+    android:max="@integer/pool_size_pref_max"
+    android:defaultValue="@integer/pool_size_pref_default"
+    app:seekBarIncrement="@integer/pool_size_pref_increment"
+    app:showSeekBarValue="true"
+    android:title="@string/pool_size_pref_title"/>
+
+
 
 </PreferenceScreen>
