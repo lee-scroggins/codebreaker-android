@@ -2,13 +2,19 @@ package edu.cnm.deepdive.codebreaker.model.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.util.Date;
 
-@Entity(tableName = "completed_game")
+@Entity(
+    tableName = "completed_game",
+    indices = {
+        @Index(value = {"service_key"}, unique = true)
+    }
+)
 public class CompletedGame {
 
-  @PrimaryKey
+  @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "completed_game_id")
   private long id;
 
@@ -26,7 +32,7 @@ public class CompletedGame {
   @ColumnInfo(name = "code_length", index = true)
   private int codeLength;
 
-  @ColumnInfo(name = "pool_size")
+  @ColumnInfo(name = "pool_size", index = true)
   private int poolSize;
 
   public long getId() {
@@ -84,4 +90,5 @@ public class CompletedGame {
   public void setPoolSize(int poolSize) {
     this.poolSize = poolSize;
   }
+
 }

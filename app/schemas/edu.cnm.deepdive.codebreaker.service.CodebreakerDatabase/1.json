@@ -1,0 +1,111 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "0d9279a37c992b627faa1c83ce0a50bd",
+    "entities": [
+      {
+        "tableName": "completed_game",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`completed_game_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `service_key` TEXT, `started` INTEGER, `completed` INTEGER, `attempts` INTEGER NOT NULL, `code_length` INTEGER NOT NULL, `pool_size` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "completed_game_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serviceKey",
+            "columnName": "service_key",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "started",
+            "columnName": "started",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "completed",
+            "columnName": "completed",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "attempts",
+            "columnName": "attempts",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "codeLength",
+            "columnName": "code_length",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poolSize",
+            "columnName": "pool_size",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "completed_game_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_completed_game_service_key",
+            "unique": true,
+            "columnNames": [
+              "service_key"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_completed_game_service_key` ON `${TABLE_NAME}` (`service_key`)"
+          },
+          {
+            "name": "index_completed_game_completed",
+            "unique": false,
+            "columnNames": [
+              "completed"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_completed_game_completed` ON `${TABLE_NAME}` (`completed`)"
+          },
+          {
+            "name": "index_completed_game_attempts",
+            "unique": false,
+            "columnNames": [
+              "attempts"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_completed_game_attempts` ON `${TABLE_NAME}` (`attempts`)"
+          },
+          {
+            "name": "index_completed_game_code_length",
+            "unique": false,
+            "columnNames": [
+              "code_length"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_completed_game_code_length` ON `${TABLE_NAME}` (`code_length`)"
+          },
+          {
+            "name": "index_completed_game_pool_size",
+            "unique": false,
+            "columnNames": [
+              "pool_size"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_completed_game_pool_size` ON `${TABLE_NAME}` (`pool_size`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0d9279a37c992b627faa1c83ce0a50bd')"
+    ]
+  }
+}

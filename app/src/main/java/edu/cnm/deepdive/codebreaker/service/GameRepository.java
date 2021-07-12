@@ -1,23 +1,26 @@
 package edu.cnm.deepdive.codebreaker.service;
 
 import android.content.Context;
+import edu.cnm.deepdive.codebreaker.model.dao.CompletedGameDao;
 import edu.cnm.deepdive.codebreaker.model.dto.Game;
 import edu.cnm.deepdive.codebreaker.model.dto.Guess;
+import edu.cnm.deepdive.codebreaker.model.entity.CompletedGame;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-
 
 public class GameRepository {
 
   private final CodebreakerServiceProxy proxy;
   private final Context context;
+  private final CompletedGameDao completedGameDao;
 
   public GameRepository(Context context) {
     this.context = context;
     proxy = CodebreakerServiceProxy.getInstance();
+    completedGameDao = CodebreakerDatabase.getInstance().getCompletedGameDao();
   }
 
-  public Single<Game> create(String pool, int length){
+  public Single<Game> create(String pool, int length) {
     Game gameStub = new Game();
     gameStub.setPool(pool);
     gameStub.setLength(length);
@@ -40,6 +43,22 @@ public class GameRepository {
     guess.setText(text);
     return proxy
         .submitGuess(game.getId(), guess)
+        .flatMap((completedGuess) -> {
+          if (completedGuess.isSolution()) {
+            CompletedGame completedGame = new CompletedGame();
+            completedGame.setServiceKey(game.getId());
+            completedGame.setStarted(game.getCreated());
+            completedGame.setCompleted(completedGuess.getCreated());
+            completedGame.setAttempts(game.getGuesses().size() + 1);
+            completedGame.setCodeLength(game.getLength());
+            completedGame.setPoolSize(game.getPool().length());
+            return completedGameDao
+                .insert(completedGame)
+                .map((id) -> completedGuess);
+          } else {
+            return Single.just(completedGuess);
+          }
+        })
         .map((completedGuess) -> {
           game.getGuesses().add(completedGuess);
           game.setSolved(completedGuess.isSolution());
@@ -48,20 +67,4 @@ public class GameRepository {
         .subscribeOn(Schedulers.io());
   }
 
-  public static class ValidationException extends IllegalArgumentException {
-
-    private final Error error;
-
-    public ValidationException(Error error) {
-      this.error = error;
-    }
-
-    public Error getError() {
-      return error;
-    }
-
-  }
-
 }
-
-
