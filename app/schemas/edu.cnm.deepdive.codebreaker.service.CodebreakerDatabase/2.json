@@ -1,0 +1,202 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "54ad87351119d10e66a027660792c7ad",
+    "entities": [
+      {
+        "tableName": "Game",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`game_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `service_key` TEXT NOT NULL, `created` INTEGER NOT NULL, `pool` TEXT NOT NULL, `length` INTEGER NOT NULL, `solved` INTEGER NOT NULL, `pool_size` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "game_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serviceKey",
+            "columnName": "service_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pool",
+            "columnName": "pool",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "length",
+            "columnName": "length",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "solved",
+            "columnName": "solved",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poolSize",
+            "columnName": "pool_size",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "game_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Game_service_key",
+            "unique": true,
+            "columnNames": [
+              "service_key"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Game_service_key` ON `${TABLE_NAME}` (`service_key`)"
+          },
+          {
+            "name": "index_Game_created",
+            "unique": false,
+            "columnNames": [
+              "created"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Game_created` ON `${TABLE_NAME}` (`created`)"
+          },
+          {
+            "name": "index_Game_length",
+            "unique": false,
+            "columnNames": [
+              "length"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Game_length` ON `${TABLE_NAME}` (`length`)"
+          },
+          {
+            "name": "index_Game_pool_size",
+            "unique": false,
+            "columnNames": [
+              "pool_size"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Game_pool_size` ON `${TABLE_NAME}` (`pool_size`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Guess",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`guess_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `service_key` TEXT NOT NULL, `game_id` INTEGER NOT NULL, `created` INTEGER NOT NULL, `guess_text` TEXT NOT NULL, `exact_matches` INTEGER NOT NULL, `near_matches` INTEGER NOT NULL, `solution` INTEGER NOT NULL, FOREIGN KEY(`game_id`) REFERENCES `Game`(`game_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "guess_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serviceKey",
+            "columnName": "service_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gameId",
+            "columnName": "game_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "guess_text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exactMatches",
+            "columnName": "exact_matches",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nearMatches",
+            "columnName": "near_matches",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "solution",
+            "columnName": "solution",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "guess_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Guess_service_key",
+            "unique": true,
+            "columnNames": [
+              "service_key"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Guess_service_key` ON `${TABLE_NAME}` (`service_key`)"
+          },
+          {
+            "name": "index_Guess_game_id",
+            "unique": false,
+            "columnNames": [
+              "game_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Guess_game_id` ON `${TABLE_NAME}` (`game_id`)"
+          },
+          {
+            "name": "index_Guess_created",
+            "unique": false,
+            "columnNames": [
+              "created"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Guess_created` ON `${TABLE_NAME}` (`created`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Game",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "game_id"
+            ],
+            "referencedColumns": [
+              "game_id"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '54ad87351119d10e66a027660792c7ad')"
+    ]
+  }
+}

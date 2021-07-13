@@ -12,18 +12,21 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.Transformations;
 import androidx.preference.PreferenceManager;
 import edu.cnm.deepdive.codebreaker.R;
-import edu.cnm.deepdive.codebreaker.model.Game;
+import edu.cnm.deepdive.codebreaker.model.entity.Game;
+import edu.cnm.deepdive.codebreaker.model.entity.Guess;
+import edu.cnm.deepdive.codebreaker.model.pojo.GameWithGuesses;
 import edu.cnm.deepdive.codebreaker.service.GameRepository;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import java.util.stream.Collectors;
 
 public class GameViewModel extends AndroidViewModel implements LifecycleObserver {
 
   private final GameRepository repository;
-  private final MutableLiveData<Game> game;
+  private final MutableLiveData<Long> gameId;
+  private final LiveData<GameWithGuesses> game;
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
   private final SharedPreferences preferences;
@@ -32,7 +35,8 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
   public GameViewModel(@NonNull Application application) {
     super(application);
     repository = new GameRepository(application);
-    game = new MutableLiveData<>();
+    gameId = new MutableLiveData<>();
+    game = Transformations.switchMap(gameId, repository::get);     //witch map monitors this gameId
     throwable = new MutableLiveData<>();
     pending = new CompositeDisposable();
     preferences = PreferenceManager.getDefaultSharedPreferences(application);
@@ -45,7 +49,7 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
     startGame();
   }
 
-  public LiveData<Game> getGame() {
+  public LiveData<GameWithGuesses> getGame() {
     return game;
   }
 
@@ -55,24 +59,29 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
 
   public void startGame() {
     throwable.setValue(null);
+    Game game = new Game();
+    game.setPool(getPoolPref());
+    game.setLength(getCodeLengthPref());
     pending.add(
         repository
-            .create(getPoolPref(), getCodeLengthPref())
+            .save(game)
             .subscribe(
-                game::postValue,
+                (updatedGame) -> gameId.postValue(updatedGame.getId()),
                 this::handleThrowable
             )
     );
   }
 
-  public void submitGuess(String text) {
+  public void submitGuess(Game game, String text) {
     throwable.setValue(null);
-    //noinspection ConstantConditions
+    Guess guess = new Guess();
+    guess.setText(text);
     pending.add(
         repository
-            .addGuess(game.getValue(), text)
+            .save(game, guess)
             .subscribe(
-                game::postValue,
+                (ignored) -> {
+                },
                 this::handleThrowable
             )
     );

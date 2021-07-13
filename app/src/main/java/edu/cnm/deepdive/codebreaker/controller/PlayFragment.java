@@ -19,16 +19,17 @@ import androidx.lifecycle.ViewModelProvider;
 import edu.cnm.deepdive.codebreaker.R;
 import edu.cnm.deepdive.codebreaker.adapter.SimpleGuessAdapter;
 import edu.cnm.deepdive.codebreaker.databinding.FragmentPlayBinding;
-import edu.cnm.deepdive.codebreaker.model.Game;
-import edu.cnm.deepdive.codebreaker.model.Guess;
+import edu.cnm.deepdive.codebreaker.model.entity.Game;
+import edu.cnm.deepdive.codebreaker.model.entity.Guess;
+import edu.cnm.deepdive.codebreaker.model.pojo.GameWithGuesses;
 import edu.cnm.deepdive.codebreaker.viewmodel.GameViewModel;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlayFragment extends Fragment {
 
   private FragmentPlayBinding binding;
   private GameViewModel viewModel;
+  private GameWithGuesses game;
   private int codeLength;
   private String pool;
   private Spinner[] spinners;
@@ -49,7 +50,7 @@ public class PlayFragment extends Fragment {
         String emoji = (String) spinners[i].getSelectedItem();
         builder.append(emoji);
       }
-      viewModel.submitGuess(builder.toString());
+      viewModel.submitGuess(game, builder.toString());
     });
     spinners = setupSpinners(
         binding.guessContainer, getResources().getInteger(R.integer.code_length_pref_max));
@@ -64,8 +65,9 @@ public class PlayFragment extends Fragment {
     viewModel.getGame().observe(getViewLifecycleOwner(), this::update);
   }
 
-  private void update(Game game) {
+  private void update(GameWithGuesses game) {
     // TODO Make game display prettier.
+    this.game = game;
     codeLength = game.getLength();
     pool = game.getPool();
     // TODO Update visibility & contents of spinners.
