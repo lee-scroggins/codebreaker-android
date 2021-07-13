@@ -1,4 +1,4 @@
-package edu.cnm.deepdive.codebreaker.model.dto;
+package edu.cnm.deepdive.codebreaker.model.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

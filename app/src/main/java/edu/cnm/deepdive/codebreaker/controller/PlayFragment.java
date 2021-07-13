@@ -19,8 +19,8 @@ import androidx.lifecycle.ViewModelProvider;
 import edu.cnm.deepdive.codebreaker.R;
 import edu.cnm.deepdive.codebreaker.adapter.SimpleGuessAdapter;
 import edu.cnm.deepdive.codebreaker.databinding.FragmentPlayBinding;
-import edu.cnm.deepdive.codebreaker.model.dto.Game;
-import edu.cnm.deepdive.codebreaker.model.dto.Guess;
+import edu.cnm.deepdive.codebreaker.model.entity.Game;
+import edu.cnm.deepdive.codebreaker.model.entity.Guess;
 import edu.cnm.deepdive.codebreaker.viewmodel.GameViewModel;
 import java.util.List;
 

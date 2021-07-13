@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import edu.cnm.deepdive.codebreaker.R;
 import edu.cnm.deepdive.codebreaker.adapter.SimpleGuessAdapter.Holder;
 import edu.cnm.deepdive.codebreaker.databinding.ItemGuessBinding;
-import edu.cnm.deepdive.codebreaker.model.dto.Guess;
+import edu.cnm.deepdive.codebreaker.model.entity.Guess;
 import java.util.List;
 
 public class SimpleGuessAdapter extends RecyclerView.Adapter<Holder> {

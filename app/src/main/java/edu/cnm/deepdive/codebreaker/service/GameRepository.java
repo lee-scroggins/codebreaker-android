@@ -2,8 +2,8 @@ package edu.cnm.deepdive.codebreaker.service;
 
 import android.content.Context;
 import edu.cnm.deepdive.codebreaker.model.dao.CompletedGameDao;
-import edu.cnm.deepdive.codebreaker.model.dto.Game;
-import edu.cnm.deepdive.codebreaker.model.dto.Guess;
+import edu.cnm.deepdive.codebreaker.model.entity.Game;
+import edu.cnm.deepdive.codebreaker.model.entity.Guess;
 import edu.cnm.deepdive.codebreaker.model.entity.CompletedGame;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;

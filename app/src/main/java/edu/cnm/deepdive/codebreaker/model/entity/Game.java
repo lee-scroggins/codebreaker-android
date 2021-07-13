@@ -1,8 +1,9 @@
-package edu.cnm.deepdive.codebreaker.model.dto;
+package edu.cnm.deepdive.codebreaker.model.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
@@ -43,12 +44,11 @@ public class Game {
   private int length;
 
   @Expose
-  @ColumnInfo(name = "guess_count", index = true)
-  private int guessCount;
-
-  @Expose
   @ColumnInfo(index = true)
   private boolean solved;
+
+  @ColumnInfo(name = "pool_size", index = true)
+  private int poolSize;
 
   public long getId() {
     return id;
@@ -93,14 +93,6 @@ public class Game {
     this.length = length;
   }
 
-  public int getGuessCount() {
-    return guessCount;
-  }
-
-  public void setGuessCount(int guessCount) {
-    this.guessCount = guessCount;
-  }
-
   public boolean isSolved() {
     return solved;
   }
@@ -108,4 +100,13 @@ public class Game {
   public void setSolved(boolean solved) {
     this.solved = solved;
   }
+
+  public int getPoolSize() {
+    return poolSize;
+  }
+
+  public void setPoolSize(int poolSize) {
+    this.poolSize = poolSize;
+  }
+
 }
