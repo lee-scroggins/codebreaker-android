@@ -51,7 +51,7 @@ public interface GameDao {
   @Query("SELECT g.* FROM game AS g "
       + "INNER JOIN (SELECT game_id, COUNT(*) AS guess_count FROM guess GROUP BY game_id) AS s "
       + "ON g.game_id = s.game_id "
-      + "WHERE g.length = :length AND g.pool_size = :poolSize "
+      + "WHERE g.length = :length AND g.pool_size = :poolSize and g.solved "
       + "ORDER BY s.guess_count ASC")
   LiveData<List<GameWithGuesses>> selectTopScores(int length, int poolSize);
 

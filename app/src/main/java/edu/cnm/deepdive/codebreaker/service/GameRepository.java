@@ -67,6 +67,18 @@ public class GameRepository {
                   .setGameId(game.getId());  //needs game id to save to proper database location
               return recievedGuess; //now guess has game id
             })
+            .flatMap((receivedGuess) -> {
+              Single<Guess> task;
+              if (receivedGuess.isSolution()) {
+                game.setSolved(true);
+                task = gameDao
+                    .update(game)
+                    .map((count) -> receivedGuess);
+              } else {
+                task = Single.just(receivedGuess);
+              }
+              return task;
+            })
             .flatMap(guessDao::insert)  //returns updated game
             .map((id) -> game)
             : guessDao
