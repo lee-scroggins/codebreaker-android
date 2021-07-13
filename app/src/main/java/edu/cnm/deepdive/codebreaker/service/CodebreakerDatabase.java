@@ -1,21 +1,21 @@
 package edu.cnm.deepdive.codebreaker.service;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.ContextWrapper;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
-import edu.cnm.deepdive.codebreaker.model.dao.CompletedGameDao;
-import edu.cnm.deepdive.codebreaker.model.entity.CompletedGame;
+import edu.cnm.deepdive.codebreaker.model.dao.GameDao;
+import edu.cnm.deepdive.codebreaker.model.dao.GuessDao;
+import edu.cnm.deepdive.codebreaker.model.entity.Game;
+import edu.cnm.deepdive.codebreaker.model.entity.Guess;
 import edu.cnm.deepdive.codebreaker.service.CodebreakerDatabase.Converters;
 import java.util.Date;
 
-@Database(/*needs 4 items*/
-    /*1. completed game entity*/ entities = {CompletedGame.class},
-    version = 1, /*2. version of game*/
+@Database(/*needs items*/
+    entities = {Game.class, Guess.class}, /*1. completed game entity*/
+    version = 2, /*2. version of game. Update each change*/
     exportSchema = true /*3. creates file with JSON description.  Includes SQL code Room uses to generate.  Generate location in build.gradle.*/
     )
 
@@ -33,7 +33,10 @@ public abstract class CodebreakerDatabase extends RoomDatabase {
   public static CodebreakerDatabase getInstance() {
     return InstanceHolder.INSTANCE;
   }
-  public abstract CompletedGameDao getCompletedGameDao();
+
+  public abstract GameDao getGameDao();
+
+  public abstract GuessDao getGuessDao();
 
   private static class InstanceHolder {
 

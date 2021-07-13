@@ -44,7 +44,6 @@ public class Game {
   private int length;
 
   @Expose
-  @ColumnInfo(index = true)
   private boolean solved;
 
   @ColumnInfo(name = "pool_size", index = true)

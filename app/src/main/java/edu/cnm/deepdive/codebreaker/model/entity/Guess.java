@@ -13,7 +13,7 @@ import java.util.Date;
 @SuppressWarnings("NotNullFieldNotInitialized")
 @Entity(
     indices = {
-        @Index(value = {"servie_key"}, unique = true)
+        @Index(value = {"service_key"}, unique = true)
     },
     foreignKeys = {
         @ForeignKey( //specify entity class FK will reference
