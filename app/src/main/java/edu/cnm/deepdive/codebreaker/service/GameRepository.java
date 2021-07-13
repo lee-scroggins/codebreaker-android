@@ -30,7 +30,7 @@ public class GameRepository {
 
   public Single<Game> get(String id) {
     return proxy.getGame(id)
-        .flatMap((game) -> proxy.getGuesses(game.getId())
+        .flatMap((game) -> proxy.getGuesses(game.getServiceKey())
             .map((guesses) -> {
               game.getGuesses().addAll(guesses);
               return game;
@@ -42,11 +42,11 @@ public class GameRepository {
     Guess guess = new Guess();
     guess.setText(text);
     return proxy
-        .submitGuess(game.getId(), guess)
+        .submitGuess(game.getServiceKey(), guess)
         .flatMap((completedGuess) -> {
           if (completedGuess.isSolution()) {
             CompletedGame completedGame = new CompletedGame();
-            completedGame.setServiceKey(game.getId());
+            completedGame.setServiceKey(game.getServiceKey());
             completedGame.setStarted(game.getCreated());
             completedGame.setCompleted(completedGuess.getCreated());
             completedGame.setAttempts(game.getGuesses().size() + 1);
