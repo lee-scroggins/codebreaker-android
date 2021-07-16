@@ -6,10 +6,12 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Lifecycle.Event;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.Transformations;
@@ -20,6 +22,7 @@ import edu.cnm.deepdive.codebreaker.model.entity.Guess;
 import edu.cnm.deepdive.codebreaker.model.pojo.GameWithGuesses;
 import edu.cnm.deepdive.codebreaker.service.GameRepository;
 import io.reactivex.disposables.CompositeDisposable;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GameViewModel extends AndroidViewModel implements LifecycleObserver {
@@ -27,6 +30,9 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
   private final GameRepository repository;
   private final MutableLiveData<Long> gameId;
   private final LiveData<GameWithGuesses> game;
+  private final LiveData<List<GameWithGuesses>> scoreboard;
+  private final MutableLiveData<Integer> codeLength;
+  private final MutableLiveData<Integer> poolSize;
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
   private final SharedPreferences preferences;
@@ -37,6 +43,10 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
     repository = new GameRepository(application);
     gameId = new MutableLiveData<>();
     game = Transformations.switchMap(gameId, repository::get);     //witch map monitors this gameId
+    codeLength = new MutableLiveData<>();
+    poolSize = new MutableLiveData<>();
+    ScoreboardFilterLiveData trigger = new ScoreboardFilterLiveData(codeLength, poolSize);
+    scoreboard = Transformations.switchMap(trigger, (pair) -> repository.getScoreboard(pair.first, pair.second));
     throwable = new MutableLiveData<>();
     pending = new CompositeDisposable();
     preferences = PreferenceManager.getDefaultSharedPreferences(application);
@@ -113,6 +123,14 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
         .limit(poolSizePref)
         .mapToObj((codePoint) -> new String(new int[]{codePoint}, 0, 1))
         .collect(Collectors.joining());
+  }
+
+  private static class ScoreboardFilterLiveData extends MediatorLiveData<Pair<Integer, Integer>> {
+
+    public ScoreboardFilterLiveData(LiveData<Integer> codeLength, LiveData<Integer> poolSize) {
+      addSource(codeLength, (value) -> setValue(Pair.create(value, poolSize.getValue())));
+      addSource(poolSize, (value) -> setValue(Pair.create(codeLength.getValue(), value)));
+    }
   }
 
 }
