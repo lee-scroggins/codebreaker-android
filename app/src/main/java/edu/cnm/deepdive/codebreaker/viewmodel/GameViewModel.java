@@ -30,9 +30,9 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
   private final GameRepository repository;
   private final MutableLiveData<Long> gameId;
   private final LiveData<GameWithGuesses> game;
-  private final LiveData<List<GameWithGuesses>> scoreboard;
   private final MutableLiveData<Integer> codeLength;
   private final MutableLiveData<Integer> poolSize;
+  private final LiveData<List<GameWithGuesses>> scoreboard;
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
   private final SharedPreferences preferences;
@@ -40,18 +40,19 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
 
   public GameViewModel(@NonNull Application application) {
     super(application);
+    preferences = PreferenceManager.getDefaultSharedPreferences(application);
     repository = new GameRepository(application);
     gameId = new MutableLiveData<>();
-    game = Transformations.switchMap(gameId, repository::get);     //witch map monitors this gameId
-    codeLength = new MutableLiveData<>();
-    poolSize = new MutableLiveData<>();
+    game = Transformations.switchMap(gameId, repository::get);
+    codeLength = new MutableLiveData<>(getCodeLengthPref());
+    poolSize = new MutableLiveData<>(getPoolSizePref());
     ScoreboardFilterLiveData trigger = new ScoreboardFilterLiveData(codeLength, poolSize);
-    scoreboard = Transformations.switchMap(trigger, (pair) -> repository.getScoreboard(pair.first, pair.second));
+    scoreboard = Transformations.switchMap(trigger, (pair) ->
+        repository.getScoreboard(pair.first, pair.second));
     throwable = new MutableLiveData<>();
     pending = new CompositeDisposable();
-    preferences = PreferenceManager.getDefaultSharedPreferences(application);
     String[] emojis = application.getResources().getStringArray(R.array.emojis);
-    StringBuilder builder = new StringBuilder();
+    StringBuilder builder  = new StringBuilder();
     for (String emoji : emojis) {
       builder.append(emoji);
     }
@@ -61,6 +62,25 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
 
   public LiveData<GameWithGuesses> getGame() {
     return game;
+  }
+
+  public LiveData<Integer> getCodeLength() {
+    return codeLength;
+  }
+
+  public void setCodeLength (int codeLength) {
+    this.codeLength.setValue(codeLength);
+  }
+  public LiveData<Integer> getPoolSize() {
+    return poolSize;
+  }
+
+  public void setPoolSize (int poolSize) {
+    this.poolSize.setValue(poolSize);
+  }
+
+  public LiveData<List<GameWithGuesses>> getScoreboard() {
+    return scoreboard;
   }
 
   public LiveData<Throwable> getThrowable() {
@@ -90,8 +110,7 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
         repository
             .save(game, guess)
             .subscribe(
-                (ignored) -> {
-                },
+                (ignored) -> {},
                 this::handleThrowable
             )
     );
@@ -114,13 +133,16 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
         res.getInteger(R.integer.code_length_pref_default));
   }
 
-  private String getPoolPref() {
+  private int getPoolSizePref () {
     Resources res = getApplication().getResources();
-    int poolSizePref = preferences.getInt(res.getString(R.string.pool_size_pref_key),
+    return preferences.getInt(res.getString(R.string.pool_size_pref_key),
         res.getInteger(R.integer.pool_size_pref_default));
-    return basePool
+  }
+
+  private String getPoolPref() {
+        return basePool
         .codePoints()
-        .limit(poolSizePref)
+        .limit(getPoolSizePref())
         .mapToObj((codePoint) -> new String(new int[]{codePoint}, 0, 1))
         .collect(Collectors.joining());
   }
@@ -131,6 +153,7 @@ public class GameViewModel extends AndroidViewModel implements LifecycleObserver
       addSource(codeLength, (value) -> setValue(Pair.create(value, poolSize.getValue())));
       addSource(poolSize, (value) -> setValue(Pair.create(codeLength.getValue(), value)));
     }
+
   }
 
 }
