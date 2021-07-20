@@ -16,7 +16,12 @@
 
 
   <string name="new_game_title">New Game</string>
+  <string name="code_length_label">Code Length</string>
+  <string name="pool_size_label">Pool Size</string>
+  <string name="date_completed_header">Date Compled</string>
+  <string name="attempts_header">Attempts</string>
 
+  <string name="date_time_combination_format">%1$s %2$s</string>
   <string-array name="emojis">
     <item>&#x1f600;</item> <!-- grinning face -->
     <item>&#x1f922;</item> <!-- nauseated face -->
